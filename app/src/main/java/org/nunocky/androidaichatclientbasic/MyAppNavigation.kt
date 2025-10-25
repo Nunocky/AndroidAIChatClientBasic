@@ -6,6 +6,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import kotlinx.serialization.Serializable
+import org.nunocky.androidaichatclientbasic.ui.home.HomeScreen
 
 @Serializable
 object NavHome
