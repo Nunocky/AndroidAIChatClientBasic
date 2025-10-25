@@ -10,6 +10,9 @@ import kotlinx.serialization.Serializable
 @Serializable
 object NavHome
 
+@Serializable
+object NavSettingApiKey
+
 @Composable
 fun MyAppNavigation() {
     val activity = LocalActivity.current
@@ -20,9 +23,16 @@ fun MyAppNavigation() {
         startDestination = NavHome,
     ) {
         composable<NavHome> {
-            HomeScreen(
-                navigationBack = {
-                    activity?.finish()
+            HomeScreen(navigateSetApiKey = {
+                navController.navigate(NavSettingApiKey)
+            }, navigateBack = {
+                activity?.finish()
+            })
+        }
+        composable<NavSettingApiKey> {
+            SettingApiKeyScreen(
+                navigateBack = {
+                    navController.popBackStack()
                 })
         }
     }

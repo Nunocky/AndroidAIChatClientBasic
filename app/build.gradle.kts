@@ -28,8 +28,7 @@ android {
         release {
             isMinifyEnabled = false
             proguardFiles(
-                getDefaultProguardFile("proguard-android-optimize.txt"),
-                "proguard-rules.pro"
+                getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro"
             )
         }
     }
@@ -55,6 +54,8 @@ dependencies {
     implementation(libs.kotlinx.serialization.json)
     implementation(libs.retrofit)
     implementation(libs.androidx.compose.material.icons.extended.android)
+    implementation(libs.androidx.datastore.preferences)
+
     // firebase
 //    implementation(platform(libs.firebase.bom))
 //    implementation(libs.firebase.analytics)

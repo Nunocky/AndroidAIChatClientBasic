@@ -25,21 +25,20 @@ import kotlinx.coroutines.launch
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomeScreen(
-    navigationBack: () -> Unit = {}
+    navigateSetApiKey: () -> Unit = {}, navigateBack: () -> Unit = {}
 ) {
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
     val scope = rememberCoroutineScope() // CoroutineScopeも必要
 
-    // メイン画面のコンテンツ（例: Scaffold、TopAppBarなど）
     BackHandler {
-        navigationBack()
+        navigateBack()
     }
 
     ModalNavigationDrawer(
         drawerState = drawerState, drawerContent = {
             ModalDrawerSheet {
                 Text("API Key", modifier = Modifier.clickable() {
-                    // TODO IMPLEMENT THIS
+                    navigateSetApiKey()
                 })
             }
         }) {
@@ -61,5 +60,4 @@ fun HomeScreen(
             }
         }
     }
-
 }

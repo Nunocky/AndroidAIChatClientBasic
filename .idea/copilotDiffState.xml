@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="CopilotDiffPersistence">
+    <option name="pendingDiffs">
+      <map>
+        <entry key="$PROJECT_DIR$/app/src/main/java/com/example/androidaichatclient/data/datastore/DataStoreRepository.kt">
+          <value>
+            <PendingDiffInfo>
+              <option name="filePath" value="$PROJECT_DIR$/app/src/main/java/com/example/androidaichatclient/data/datastore/DataStoreRepository.kt" />
+              <option name="updatedContent" value="package com.example.androidaichatclient.data.datastore&#10;&#10;import kotlinx.coroutines.flow.Flow&#10;&#10;interface DataStoreRepository {&#10;    // 保存された API キーを監視する Flow（null 可能）&#10;    val apiKeyFlow: Flow&lt;String?&gt;&#10;&#10;    // API キーを保存&#10;    suspend fun setApiKey(key: String)&#10;&#10;    // 全データをクリア&#10;    suspend fun clear()&#10;}&#10;" />
+            </PendingDiffInfo>
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/app/src/main/java/com/example/androidaichatclient/data/datastore/PreferencesDataStoreImpl.kt">
+          <value>
+            <PendingDiffInfo>
+              <option name="filePath" value="$PROJECT_DIR$/app/src/main/java/com/example/androidaichatclient/data/datastore/PreferencesDataStoreImpl.kt" />
+              <option name="updatedContent" value="package com.example.androidaichatclient.data.datastore&#10;&#10;import android.content.Context&#10;import androidx.datastore.preferences.core.edit&#10;import androidx.datastore.preferences.core.stringPreferencesKey&#10;import androidx.datastore.preferences.preferencesDataStore&#10;import kotlinx.coroutines.flow.Flow&#10;import kotlinx.coroutines.flow.map&#10;import javax.inject.Inject&#10;&#10;// Context.dataStore の定義（ファイル名: ai_chat_prefs）&#10;private val Context.dataStore by preferencesDataStore(name = &quot;ai_chat_prefs&quot;)&#10;&#10;class PreferencesDataStoreImpl @Inject constructor(&#10;    private val context: Context&#10;) : DataStoreRepository {&#10;&#10;    private val API_KEY = stringPreferencesKey(&quot;api_key&quot;)&#10;&#10;    override val apiKeyFlow: Flow&lt;String?&gt; = context.dataStore.data&#10;        .map { prefs -&gt; prefs[API_KEY] }&#10;&#10;    override suspend fun setApiKey(key: String) {&#10;        context.dataStore.edit { prefs -&gt;&#10;            prefs[API_KEY] = key&#10;        }&#10;    }&#10;&#10;    override suspend fun clear() {&#10;        context.dataStore.edit { prefs -&gt;&#10;            prefs.clear()&#10;        }&#10;    }&#10;}&#10;" />
+            </PendingDiffInfo>
+          </value>
+        </entry>
+      </map>
+    </option>
+  </component>
+</project>
