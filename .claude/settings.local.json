@@ -2,7 +2,8 @@
   "permissions": {
     "allow": [
       "Bash(./gradlew build:*)",
-      "WebFetch(domain:platform.openai.com)"
+      "WebFetch(domain:platform.openai.com)",
+      "Bash(test:*)"
     ],
     "deny": [],
     "ask": []
