@@ -4,6 +4,14 @@ import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 /**
+ * Message in the conversation
+ */
+@Serializable
+data class ChatMessage(
+    val role: String, val content: String
+)
+
+/**
  * Request model for OpenAI Chat Completions API
  */
 @Serializable
@@ -14,15 +22,6 @@ data class ChatRequest(
     @SerialName("max_tokens") val maxTokens: Int? = null,
     val temperature: Double? = null,
     @SerialName("top_p") val topP: Double? = null
-)
-
-/**
- * Message in the conversation
- */
-@Serializable
-data class ChatMessage(
-    val role: String, // "user", "assistant", "system"
-    val content: String
 )
 
 /**
@@ -52,6 +51,5 @@ data class ChatStreamChoice(
  */
 @Serializable
 data class ChatDelta(
-    val role: String? = null,
-    val content: String? = null
+    val role: String? = null, val content: String? = null
 )

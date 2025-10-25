@@ -1,6 +1,5 @@
 package org.nunocky.androidaichatclientbasic.repository
 
-import android.util.Log
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
@@ -43,7 +42,7 @@ class OpenAIRepository @Inject constructor(
         val apiKey = dataStoreRepository.apiKeyFlow.first()
 
         if (apiKey.isNullOrBlank()) {
-            Log.e(TAG, "API Key is not set")
+//            Log.e(TAG, "API Key is not set")
             close(Exception("API Key is not set"))
             return@callbackFlow
         }
@@ -51,22 +50,21 @@ class OpenAIRepository @Inject constructor(
         // Ensure streaming is enabled
         val streamingRequest = chatRequest.copy(stream = true)
 
-        val requestBody = json.encodeToString(streamingRequest)
-            .toRequestBody("application/json".toMediaType())
+        val jsonString = json.encodeToString(ChatRequest.serializer(), streamingRequest)
+//        Log.d(TAG, "Request JSON: $jsonString")
 
-        val request = Request.Builder()
-            .url("$baseUrl/chat/completions")
+        val requestBody = jsonString.toRequestBody("application/json".toMediaType())
+
+        val request = Request.Builder().url("$baseUrl/chat/completions")
             .addHeader("Authorization", "Bearer $apiKey")
-            .addHeader("Content-Type", "application/json")
-            .post(requestBody)
-            .build()
+            .addHeader("Content-Type", "application/json").post(requestBody).build()
 
-        Log.d(TAG, "Starting streaming request to OpenAI")
+        //Log.d(TAG, "Starting streaming request to OpenAI")
         val call = okHttpClient.newCall(request)
 
         call.enqueue(object : Callback {
             override fun onFailure(call: Call, e: IOException) {
-                Log.e(TAG, "Network request failed", e)
+//                Log.e(TAG, "Network request failed", e)
                 close(e)
             }
 
@@ -75,14 +73,14 @@ class OpenAIRepository @Inject constructor(
                     try {
                         if (!resp.isSuccessful) {
                             val errorBody = resp.body?.string() ?: "No error details"
-                            Log.e(TAG, "HTTP ${resp.code}: $errorBody")
+//                            Log.e(TAG, "HTTP ${resp.code}: $errorBody")
                             close(Exception("HTTP ${resp.code}: $errorBody"))
                             return
                         }
 
                         val responseBody = resp.body
                         if (responseBody == null) {
-                            Log.e(TAG, "Response body is null")
+//                            Log.e(TAG, "Response body is null")
                             close(Exception("Response body is null"))
                             return
                         }
@@ -92,10 +90,10 @@ class OpenAIRepository @Inject constructor(
                             parseSSEStream(reader)
                         }
 
-                        Log.d(TAG, "Stream completed successfully")
+//                        Log.d(TAG, "Stream completed successfully")
                         close()
                     } catch (e: Exception) {
-                        Log.e(TAG, "Error processing response", e)
+//                        Log.e(TAG, "Error processing response", e)
                         close(e)
                     }
                 }
@@ -114,7 +112,7 @@ class OpenAIRepository @Inject constructor(
 
                             // Check for stream end marker
                             if (data == "[DONE]") {
-                                Log.d(TAG, "Received [DONE] marker, ending stream")
+//                                Log.d(TAG, "Received [DONE] marker, ending stream")
                                 return
                             }
 
@@ -150,25 +148,25 @@ class OpenAIRepository @Inject constructor(
                         if (!content.isNullOrEmpty()) {
                             val sendResult = trySend(content)
                             if (sendResult.isFailure) {
-                                Log.w(TAG, "Failed to send content chunk")
+//                                Log.w(TAG, "Failed to send content chunk")
                             }
                         }
 
                         // Check for finish reason (stop, length, content_filter, etc.)
                         choice.finishReason?.let { reason ->
-                            Log.d(TAG, "Stream finished with reason: $reason")
+//                            Log.d(TAG, "Stream finished with reason: $reason")
                             // Stream is complete, no need to continue
                         }
                     }
                 } catch (e: Exception) {
-                    Log.e(TAG, "Failed to parse stream chunk: $data", e)
+//                    Log.e(TAG, "Failed to parse stream chunk: $data", e)
                     // Don't close the stream on parsing errors, just skip this chunk
                 }
             }
         })
 
         awaitClose {
-            Log.d(TAG, "Flow collection cancelled, cancelling HTTP call")
+//            Log.d(TAG, "Flow collection cancelled, cancelling HTTP call")
             call.cancel()
         }
     }
