@@ -21,3 +21,4 @@ dependencyResolutionManagement {
 
 rootProject.name = "AndroidAIChatClientBasic"
 include(":app")
+include(":network")
