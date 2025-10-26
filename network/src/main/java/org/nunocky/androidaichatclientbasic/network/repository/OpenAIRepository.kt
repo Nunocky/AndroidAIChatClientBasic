@@ -1,9 +1,8 @@
-package org.nunocky.androidaichatclientbasic.repository
+package org.nunocky.androidaichatclientbasic.network.repository
 
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
-import kotlinx.coroutines.flow.first
 import kotlinx.serialization.json.Json
 import okhttp3.Call
 import okhttp3.Callback
@@ -12,9 +11,8 @@ import okhttp3.OkHttpClient
 import okhttp3.Request
 import okhttp3.RequestBody.Companion.toRequestBody
 import okhttp3.Response
-import org.nunocky.androidaichatclientbasic.datastore.DataStoreRepository
-import org.nunocky.androidaichatclientbasic.model.ChatRequest
-import org.nunocky.androidaichatclientbasic.model.ChatStreamResponse
+import org.nunocky.androidaichatclientbasic.network.model.ChatRequest
+import org.nunocky.androidaichatclientbasic.network.model.ChatStreamResponse
 import java.io.BufferedReader
 import java.io.IOException
 import javax.inject.Inject
@@ -25,9 +23,7 @@ import javax.inject.Singleton
  */
 @Singleton
 class OpenAIRepository @Inject constructor(
-    private val dataStoreRepository: DataStoreRepository,
-    private val okHttpClient: OkHttpClient,
-    private val json: Json
+    private val okHttpClient: OkHttpClient, private val json: Json
 ) {
     private val baseUrl = "https://api.openai.com/v1"
 
@@ -38,10 +34,11 @@ class OpenAIRepository @Inject constructor(
      * @return Flow of content strings as they arrive from the API
      * @throws Exception if API key is not set, network error, or API returns an error
      */
-    fun streamChatCompletion(chatRequest: ChatRequest): Flow<String> = callbackFlow {
-        val apiKey = dataStoreRepository.apiKeyFlow.first()
+    fun streamChatCompletion(
+        apiKey: String, chatRequest: ChatRequest
+    ): Flow<String> = callbackFlow {
 
-        if (apiKey.isNullOrBlank()) {
+        if (apiKey.isBlank()) {
 //            Log.e(TAG, "API Key is not set")
             close(Exception("API Key is not set"))
             return@callbackFlow

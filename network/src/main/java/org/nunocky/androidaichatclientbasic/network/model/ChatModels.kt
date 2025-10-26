@@ -1,4 +1,4 @@
-package org.nunocky.androidaichatclientbasic.model
+package org.nunocky.androidaichatclientbasic.network.model
 
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable

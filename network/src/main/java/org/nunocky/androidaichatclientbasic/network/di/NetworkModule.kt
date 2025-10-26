@@ -1,4 +1,4 @@
-package org.nunocky.androidaichatclientbasic.di
+package org.nunocky.androidaichatclientbasic.network.di
 
 import dagger.Module
 import dagger.Provides

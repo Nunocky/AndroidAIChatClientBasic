@@ -8,15 +8,18 @@ import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
-import org.nunocky.androidaichatclientbasic.model.ChatMessage
-import org.nunocky.androidaichatclientbasic.model.ChatRequest
-import org.nunocky.androidaichatclientbasic.repository.OpenAIRepository
+import org.nunocky.androidaichatclientbasic.datastore.DataStoreRepository
+import org.nunocky.androidaichatclientbasic.network.model.ChatMessage
+import org.nunocky.androidaichatclientbasic.network.model.ChatRequest
+import org.nunocky.androidaichatclientbasic.network.repository.OpenAIRepository
 import javax.inject.Inject
 
 @HiltViewModel
 class HomeScreenViewModel @Inject constructor(
-    private val repository: OpenAIRepository
+    private val dataStoreRepository: DataStoreRepository,
+    private val repository: OpenAIRepository,
 ) : ViewModel() {
     private val _history = MutableStateFlow<List<ChatMessage>>(emptyList())
     val history = _history.asStateFlow()
@@ -29,6 +32,9 @@ class HomeScreenViewModel @Inject constructor(
 
     fun doConversation(text: String) {
         viewModelScope.launch(Dispatchers.IO) {
+
+            val apiKey = dataStoreRepository.apiKeyFlow.first() ?: ""
+
             val userMessage = ChatMessage(role = "user", content = text)
             val newHistory = _history.value.toMutableList().apply { add(userMessage) }
             _history.value = newHistory
@@ -40,7 +46,10 @@ class HomeScreenViewModel @Inject constructor(
                     model = "gpt-4o", messages = _history.value
                 )
 
-                repository.streamChatCompletion(chatRequest).collect { chunk ->
+                repository.streamChatCompletion(
+                    apiKey = apiKey,
+                    chatRequest = chatRequest,
+                ).collect { chunk ->
                     _currentOutput.value += chunk
                 }
 
